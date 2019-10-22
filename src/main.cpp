@@ -12,9 +12,9 @@
  * whenever you create new .cpp files.
  */
 
+bool isValidFile(string);
 using namespace std;
 using namespace solver;
-bool isValidFile(string);
 
 int main(int argc, char *argv[]) {
 

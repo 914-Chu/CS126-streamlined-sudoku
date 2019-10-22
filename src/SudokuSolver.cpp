@@ -22,7 +22,7 @@ ostream& operator<< (ostream& output, const SudokuBoard& board) {
 istream& operator>> (istream& input, SudokuBoard& board) {
     string line;
     input >> line;
-    board.boardState = board.setUpBoard(line);
+    board.boardState_ = board.setUpBoard(line);
     return input;
 }
 
@@ -32,8 +32,8 @@ vector<vector<int>> SudokuBoard::setUpBoard(const string &str) {
     for(unsigned int row = 0; row < kSideLength; row++){
         for(unsigned int col = 0; col < kSideLength; col++){
             char character = str[static_cast<unsigned int>(kSideLength * row + col)];
-            if(isdigit(character) && character != '0'){
-                int num = character - '0';
+            if(isdigit(character)){
+                int num = character - kZero;
                 state[row][col] = num;
             }
         }
@@ -41,11 +41,15 @@ vector<vector<int>> SudokuBoard::setUpBoard(const string &str) {
     return state;
 }
 
-void SudokuBoard::setNumber(Cell current, int value) {
+void SudokuBoard::setValue(Cell current, int value) {
     boardState_[current.getRow()][current.getCol()] = value;
 }
 
-Cell::Cell(int row, int col) {
+int SudokuBoard::getValue(Cell current) {
+    return boardState_[current.getRow()][current.getCol()];
+}
+
+Cell::Cell(unsigned int row, unsigned int col) {
 
     this->row_ = row;
     this->col_ = col;
@@ -53,21 +57,18 @@ Cell::Cell(int row, int col) {
 
 Cell Cell::getNextCell(Cell current) {
 
-    int row = current.getRow();
-    int col = current.getCol();
+    unsigned int row = current.getRow();
+    unsigned int col = current.getCol();
 
     row ++;
     col ++;
 
-    if(row >= kSideLength){
-        row = -1;
-    }else if(col >= kSideLength){
+    if(col >= kSideLength){
         col = 0;
     }
     Cell next(row, col);
     return next;
 }
-
 namespace solver{
 
 bool solve(SudokuBoard board){
@@ -78,9 +79,48 @@ bool solve(SudokuBoard board){
 
 bool solve(SudokuBoard board, Cell current){
 
-    if(current.getRow() == -1){
+    if(current.getRow() >= kSideLength){
         return true;
-    }else if()
+    }else if(board.getValue(current) != kUnassignedCell){
+        return solve(board, current.getNextCell(current));
+    }else{
+        for(int num = 0; num < kSideLength; num++){
+            if(isValidValue(board, current, num)){
+                board.setValue(current,num);
+                return solve(board, current.getNextCell(current));
+            }
+        }
+        return false;
+    }
+}
+
+bool isValidValue(SudokuBoard board, Cell current, int value){
+
+    for(unsigned int index = 0; index < kSideLength; index++){
+        if(board.getValue(Cell(index,current.getCol())) == value ||
+           board.getValue(Cell(current.getRow(), index)) == value){
+            return false;
+        }
+    }
+    Cell corner = findCornerCell(current);
+    unsigned int edge_row_index = corner.getRow() + kSubSideLength;
+    unsigned int edge_col_index = corner.getCol() + kSubSideLength;
+
+    for(unsigned int row = corner.getRow(); row < edge_row_index; row++) {
+        for(unsigned int col = corner.getCol(); col < edge_col_index; col++){
+            if(board.getValue(Cell(row,col)) == value){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+Cell findCornerCell(Cell current){
+
+    unsigned int row = current.getRow() / kSubSideLength * kSubSideLength;
+    unsigned int col = current.getCol() / kSubSideLength * kSubSideLength;
+    return Cell(row,col);
 }
 
 }
