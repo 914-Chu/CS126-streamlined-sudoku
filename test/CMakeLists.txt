@@ -2,7 +2,8 @@
 add_executable(tests
         tests-main.cpp
         SudokuSolverTest.cpp
-        ../src/SudokuSolver.cpp)
+        ../src/SudokuSolver.cpp
+        ../src/main.cpp)
 
 # Directories to search for header files
 target_include_directories(tests PRIVATE

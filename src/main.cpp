@@ -13,7 +13,7 @@
  */
 
 using namespace std;
-
+using namespace solver;
 bool isValidFile(string);
 
 int main(int argc, char *argv[]) {
@@ -22,7 +22,6 @@ int main(int argc, char *argv[]) {
     string fileName;
     string line;
     vector<string> fileContent;
-    SudokuBoard board;
 
     cout <<"Please enter your file name. A default file will be used if entry is invalid." << endl;
     cin >> fileName;
@@ -38,16 +37,23 @@ int main(int argc, char *argv[]) {
     if(fileContent[0] == kSPFVersion){
         fileContent.erase(fileContent.begin());
         for(const auto& str : fileContent){
-            istringstream stream(str);
-            stream >> board;
+            if(str.length() == 81) {
+                SudokuBoard board;
+                istringstream stream(str);
+                stream >> board;
+                if(solve(board)){
+                    cout << board;
+                }else{
+                    cout << "Unsolvable puzzle" << endl;
+                }
+            }
         }
     }
 
-    cout << board;
     return EXIT_SUCCESS;
 }
 
-bool isValidFile(const string& fileName){
+bool isValidFile(string fileName){
     ifstream test(fileName);
     return test.is_open();
 }
