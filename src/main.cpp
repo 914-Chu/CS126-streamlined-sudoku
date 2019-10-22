@@ -1,5 +1,7 @@
 #include <iostream>
-
+#include <fstream>
+#include <sstream>
+#include "SudokuSolver.h"
 /*
  * Write your sudoku program! Do not put all of your code in main.cpp;
  * make new files as necessary.
@@ -10,7 +12,42 @@
  * whenever you create new .cpp files.
  */
 
+using namespace std;
+
+bool isValidFile(string);
+
 int main(int argc, char *argv[]) {
-    std::cout << "Hello, World!" << std::endl;
+
+    const string kSPFVersion = "#spf1.0";
+    string fileName;
+    string line;
+    vector<string> fileContent;
+    SudokuBoard board;
+
+    cout <<"Please enter your file name. A default file will be used if entry is invalid." << endl;
+    cin >> fileName;
+    if(!isValidFile(fileName)){
+        fileName = argv[0];
+    }
+    ifstream spfFile(fileName);
+    if(spfFile.is_open()){
+        while(getline(spfFile,line)){
+            fileContent.push_back(line);
+        }
+    }
+    if(fileContent[0] == kSPFVersion){
+        fileContent.erase(fileContent.begin());
+        for(const auto& str : fileContent){
+            istringstream stream(str);
+            stream >> board;
+        }
+    }
+
+    cout << board;
     return EXIT_SUCCESS;
+}
+
+bool isValidFile(const string& fileName){
+    ifstream test(fileName);
+    return test.is_open();
 }
