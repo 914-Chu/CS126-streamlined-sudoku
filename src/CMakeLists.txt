@@ -1,8 +1,7 @@
 # The .cpp files for this executable
 add_executable(sudoku
         main.cpp
-        SudokuSolver.cpp
-        SudokuSolver.h)
+        SudokuSolver.cpp)
 
 # Directories to search for header files
  target_include_directories(sudoku PRIVATE

@@ -4,6 +4,29 @@
 
 using namespace std;
 
+
+Cell::Cell(unsigned int row, unsigned int col) {
+
+    this->row_ = row;
+    this->col_ = col;
+}
+
+Cell Cell::getNextCell(Cell current) {
+
+    unsigned int row = current.getRow();
+    unsigned int col = current.getCol();
+
+    row ++;
+    col ++;
+
+    if(col >= kSideLength){
+        col = 0;
+    }
+    Cell next(row, col);
+    return next;
+}
+
+
 ostream& operator<< (ostream& output, const SudokuBoard& board) {
 
     for(const auto &row : board.boardState_){
@@ -49,26 +72,6 @@ int SudokuBoard::getValue(Cell current) {
     return boardState_[current.getRow()][current.getCol()];
 }
 
-Cell::Cell(unsigned int row, unsigned int col) {
-
-    this->row_ = row;
-    this->col_ = col;
-}
-
-Cell Cell::getNextCell(Cell current) {
-
-    unsigned int row = current.getRow();
-    unsigned int col = current.getCol();
-
-    row ++;
-    col ++;
-
-    if(col >= kSideLength){
-        col = 0;
-    }
-    Cell next(row, col);
-    return next;
-}
 namespace solver{
 
 bool solve(SudokuBoard board){
