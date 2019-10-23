@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     cout <<"Please enter your file name. A default file will be used if entry is invalid." << endl;
     cin >> fileName;
     if(!isValidFile(fileName)){
-        fileName = argv[0];
+        fileName = argv[1];
     }
     ifstream spfFile(fileName);
     if(spfFile.is_open()){
@@ -41,8 +41,9 @@ int main(int argc, char *argv[]) {
                 SudokuBoard board;
                 istringstream stream(str);
                 stream >> board;
+                cout << "Before:" << endl << board;
                 if(solve(board)){
-                    cout << board;
+                    cout << "After:" << endl << board;
                 }else{
                     cout << "Unsolvable puzzle" << endl;
                 }
